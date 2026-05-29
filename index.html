@@ -1966,8 +1966,10 @@
               <option value="rango">Rango</option>
             </select>
           </div>
-          <div class="fg" id="mov-desde-w" style="display:none;"><label>Desde</label><input type="date" id="mov-desde" onchange="renderMovimientos()"></div>
-          <div class="fg" id="mov-hasta-w" style="display:none;"><label>Hasta</label><input type="date" id="mov-hasta" onchange="renderMovimientos()"></div>
+          <div class="fg" id="mov-desde-w" style="display:none;"><label>Desde</label><input type="date" id="mov-desde"
+              onchange="renderMovimientos()"></div>
+          <div class="fg" id="mov-hasta-w" style="display:none;"><label>Hasta</label><input type="date" id="mov-hasta"
+              onchange="renderMovimientos()"></div>
           <button class="btn btn-ghost btn-sm" onclick="renderMovimientos()">↻ Filtrar</button>
           <button class="btn btn-ghost btn-sm" onclick="exportarMovimientos()">⬇ Excel</button>
         </div>
@@ -2222,7 +2224,7 @@
                 <th rowspan="2"
                   style="padding:8px 12px;border:1px solid rgba(255,255,255,.2);text-align:left;min-width:160px;vertical-align:middle;">
                   FUNCIONARIO</th>
-                <th colspan="10"
+                <th colspan="11"
                   style="padding:8px;border:1px solid rgba(255,255,255,.2);text-align:center;background:#1a3a6e;">
                   MANTENIMIENTO</th>
                 <th colspan="5"
@@ -2270,6 +2272,9 @@
                   style="padding:5px;border:1px solid rgba(255,255,255,.2);text-align:center;font-size:9px;min-width:70px;">
                   GUÍAS Y<br>PORTASOPANDAS</th>
                 <th
+                  style="padding:5px;border:1px solid rgba(255,255,255,.2);text-align:center;font-size:9px;min-width:60px;">
+                  TRICAPAS</th>
+                <th
                   style="padding:5px;border:1px solid rgba(255,255,255,.2);text-align:center;font-size:9px;min-width:50px;">
                   OTROS</th>
                 <th
@@ -2291,7 +2296,7 @@
             </thead>
             <tbody id="body-act-entrada">
               <tr id="act-empty-row">
-                <td colspan="21" style="text-align:center;color:var(--muted);padding:30px;font-size:13px;">Agregue
+                <td colspan="22" style="text-align:center;color:var(--muted);padding:30px;font-size:13px;">Agregue
                   funcionarios para iniciar el registro</td>
               </tr>
             </tbody>
@@ -2345,6 +2350,7 @@
                   <th>M.And.Tijeras</th>
                   <th>M.And.Cert.</th>
                   <th>M.G.Sopandas</th>
+                  <th>M.Tricapas</th>
                   <th>M.Otros</th>
                   <th>P.Gatos</th>
                   <th>P.Cerchas</th>
@@ -2703,7 +2709,7 @@
     let entregaItems = [];
     let sigPads = {};
     let chartInstances = {};
-    const ACT_COLS = ['gatos', 'cerchas', 'tijeras', 'tableros', 'guarderas', 'formaletas', 'and_tijeras', 'and_cert', 'guias', 'otros', 'p_gatos', 'p_cerchas', 'p_tijeras', 'p_form_met', 'p_form_ecply'];
+    const ACT_COLS = ['gatos', 'cerchas', 'tijeras', 'tableros', 'guarderas', 'formaletas', 'and_tijeras', 'and_cert', 'guias', 'tricapas', 'otros', 'p_gatos', 'p_cerchas', 'p_tijeras', 'p_form_met', 'p_form_ecply'];
 
     // ═══════════════════════════════════════════════
     // API
@@ -3251,6 +3257,87 @@
     </tr>`).join('') || '<tr><td colspan="10" style="text-align:center;color:var(--muted);padding:30px">Sin permisos registrados</td></tr>';
     }
 
+    function verPermiso(index) {
+      const p = DATA.permisos[index];
+      if (!p) return;
+      const logo = typeof _getLogoBase64 !== 'undefined' ? _getLogoBase64() : '';
+      
+      const consecutivo = p[0];
+      const fechaSol = p[1];
+      const funcName = p[2];
+      const cargo = p[3];
+      const motivo = p[4];
+      const fechaPer = p[5];
+      const regresa = p[6];
+      const horaSalida = p[7];
+      const horaRegreso = p[8];
+      const autoriza = p[9];
+      const horas = p[10];
+      const descontar = p[11];
+
+      const html = `
+    <div style="font-family:Arial,sans-serif; color:#000; background:#fff; padding:20px; border-radius:8px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:14px;border-bottom:2px solid #e67e00;padding-bottom:10px;">
+        <div style="display:flex;align-items:center;gap:14px;">
+          <img src="${logo}" alt="Equipos Córdoba SAS" style="height:54px;width:auto;object-fit:contain;">
+          <div>
+            <h1 style="font-size:15px;font-weight:700;color:#1a1a6e;margin:0 0 3px;">EQUIPOS CÓRDOBA SAS</h1>
+            <p style="font-size:9px;color:#666;margin:0;">Soluciones integrales para el alquiler de Equipos para la Construcción</p>
+          </div>
+        </div>
+        <div style="border:2px solid #1a1a6e;border-radius:6px;padding:8px 16px;text-align:center;min-width:130px;">
+          <div style="font-size:8px;color:#666;text-transform:uppercase;letter-spacing:.5px;margin-bottom:3px;">DOCUMENTO</div>
+          <div style="font-size:20px;font-weight:900;color:#1a1a6e;font-family:Arial,sans-serif;">${consecutivo || 'PERMISO'}</div>
+        </div>
+      </div>
+      <p style="font-size:10px;color:#444;margin-bottom:12px;font-weight:bold;text-transform:uppercase;letter-spacing:.5px;">SOLICITUD DE PERMISO LABORAL</p>
+      
+      <div style="display:flex; justify-content:flex-end; margin-bottom:15px; border-bottom:1px solid #ccc; padding-bottom:10px;">
+        <div><strong>Fecha Solicitud:</strong> ${fechaSol || '—'}</div>
+      </div>
+      
+      <div style="margin-bottom:15px;">
+        <div style="margin-bottom:5px;"><strong>Funcionario:</strong> ${funcName || '—'}</div>
+        <div style="margin-bottom:5px;"><strong>Cargo:</strong> ${cargo || '—'}</div>
+      </div>
+      
+      <div style="margin-bottom:15px; background:#f9f9f9; border:1px solid #ddd; padding:10px; border-radius:4px;">
+        <strong style="display:block; margin-bottom:5px;">Motivo del Permiso:</strong>
+        <p style="margin:0; white-space:pre-wrap; font-size:12px;">${motivo || '—'}</p>
+      </div>
+      
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:15px;">
+        <div><strong>Fecha del Permiso:</strong> ${fechaPer || '—'}</div>
+        <div><strong>¿Descontar de Nómina?:</strong> <span style="font-weight:bold; color:${descontar === 'Si' ? '#e67e00' : '#1a1a6e'}">${descontar || '—'}</span></div>
+        <div><strong>Hora de Salida:</strong> ${horaSalida || '—'}</div>
+        <div><strong>¿Regresa?:</strong> ${regresa || '—'}</div>
+        <div><strong>Hora de Regreso:</strong> ${regresa === 'Si' ? (horaRegreso || '—') : 'N/A'}</div>
+        <div><strong>Horas Totales:</strong> ${horas || '—'} hrs</div>
+      </div>
+      
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-top:40px; text-align:center;">
+        <div>
+          <div style="height:60px;"></div>
+          <div style="border-top:1px solid #000; margin-top:5px; padding-top:5px; font-size:11px;">
+            <strong>${autoriza || 'Firma Autoriza'}</strong><br>
+            Quien Autoriza
+          </div>
+        </div>
+        <div>
+          <div style="height:60px;"></div>
+          <div style="border-top:1px solid #000; margin-top:5px; padding-top:5px; font-size:11px;">
+            <strong>${funcName || 'Firma Funcionario'}</strong><br>
+            Funcionario
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+      document.getElementById('ver-permiso-content').innerHTML = html;
+      abrirModal('modal-ver-permiso');
+    }
+
     function renderHistCompras() {
       const provFlt = document.getElementById('hc-prov')?.value || '';
       const artFlt = document.getElementById('hc-art')?.value || '';
@@ -3294,7 +3381,7 @@
       const hw = document.getElementById('mov-hasta-w');
       if (dw) dw.style.display = periodo === 'rango' ? '' : 'none';
       if (hw) hw.style.display = periodo === 'rango' ? '' : 'none';
-      
+
       const { desde, hasta } = getDateRange(periodo, 'mov-desde', 'mov-hasta');
 
       const list = DATA.epp_movimientos.filter(m => {
@@ -4272,13 +4359,13 @@
 
         const key = fecha + '_' + funcId;
         if (!grouped[key]) {
-          grouped[key] = { fecha, funcId, funcNombre, items: Array(17).fill(0), obs: [] };
+          grouped[key] = { fecha, funcId, funcNombre, items: Array(18).fill(0), obs: [] };
         }
 
         const actColsDef = [
           { tipo: 'Mantenimiento', elem: 'Gatos' }, { tipo: 'Mantenimiento', elem: 'Cerchas' }, { tipo: 'Mantenimiento', elem: 'Tijeras' }, { tipo: 'Mantenimiento', elem: 'Tableros' }, { tipo: 'Mantenimiento', elem: 'Guarderas' },
           { tipo: 'Mantenimiento', elem: 'Formaletas' },
-          { tipo: 'Mantenimiento', elem: 'Andamios de Tijeras' }, { tipo: 'Mantenimiento', elem: 'Andamios Certificados' }, { tipo: 'Mantenimiento', elem: 'Guías y Portasopandas' }, { tipo: 'Mantenimiento', elem: 'Otros' },
+          { tipo: 'Mantenimiento', elem: 'Andamios de Tijeras' }, { tipo: 'Mantenimiento', elem: 'Andamios Certificados' }, { tipo: 'Mantenimiento', elem: 'Guías y Portasopandas' }, { tipo: 'Mantenimiento', elem: 'Tricapas' }, { tipo: 'Mantenimiento', elem: 'Otros' },
           { tipo: 'Pintura', elem: 'Gatos' }, { tipo: 'Pintura', elem: 'Cerchas' }, { tipo: 'Pintura', elem: 'Tijeras' }, { tipo: 'Pintura', elem: 'Formaletas Metálicas' }, { tipo: 'Pintura', elem: 'Formaletas Ecply' },
           { tipo: 'Cargue', elem: 'N/A' }, { tipo: 'Descargue', elem: 'N/A' }
         ];
@@ -4306,7 +4393,7 @@
       <td style="max-width:150px" title="${g.obs.join(' | ')}">${truncate(g.obs.join(' | '), 30)}</td>
       <td style="text-align:center"></td>
     </tr>`).join('') :
-        '<tr><td colspan="21" style="text-align:center;color:var(--muted);padding:30px">Sin actividades registradas</td></tr>';
+        '<tr><td colspan="22" style="text-align:center;color:var(--muted);padding:30px">Sin actividades registradas</td></tr>';
     }
 
     async function eliminarActividad(i) {
@@ -4912,15 +4999,15 @@
 
         if (movimientos.length > 0) {
           await apiPost({ action: 'batchAppend', sheet: 'EPP_Movimientos', data: movimientos });
-          if(DATA.epp_movimientos) movimientos.forEach(m => DATA.epp_movimientos.push(m));
-          
+          if (DATA.epp_movimientos) movimientos.forEach(m => DATA.epp_movimientos.push(m));
+
           for (const el of items) {
-             const idx = parseInt(el.dataset.idx);
-             const cant = parseFloat(el.dataset.cant);
-             const art = DATA.epp_articulos[idx];
-             const currStock = parseFloat(art[4]) || 0;
-             art[4] = Math.max(0, currStock - cant);
-             await apiPost({ action: 'updateRow', sheet: 'EPP_Articulos', rowIndex: idx + 2, data: art });
+            const idx = parseInt(el.dataset.idx);
+            const cant = parseFloat(el.dataset.cant);
+            const art = DATA.epp_articulos[idx];
+            const currStock = parseFloat(art[4]) || 0;
+            art[4] = Math.max(0, currStock - cant);
+            await apiPost({ action: 'updateRow', sheet: 'EPP_Articulos', rowIndex: idx + 2, data: art });
           }
         }
 
@@ -5010,7 +5097,7 @@
         if (res && res.ok) {
           DATA.permisos.push(payload);
           alert('Permiso guardado exitosamente.');
-          limpiarPermiso();
+          // limpiarPermiso(); // Eliminado para que el usuario pueda imprimir el documento
           renderHistPermisos();
         } else {
           alert('Error al guardar el permiso.');
@@ -5202,7 +5289,7 @@
 
       let html = `<td style="padding:6px;border:1px solid rgba(255,255,255,0.1);white-space:nowrap;font-weight:600;">${funcName}</td>`;
 
-      for (let i = 0; i < 17; i++) {
+      for (let i = 0; i < 18; i++) {
         html += `<td style="padding:4px;border:1px solid rgba(255,255,255,0.1);"><input type="number" min="0" class="act-val" style="width:100%;min-width:40px;box-sizing:border-box;font-size:11px;padding:6px 4px;border:1px solid var(--border);border-radius:4px;background:var(--surface2);color:var(--text);text-align:center;outline:none;" placeholder="0"></td>`;
       }
 
@@ -5248,7 +5335,7 @@
       const actColsDef = [
         { tipo: 'Mantenimiento', elem: 'Gatos' }, { tipo: 'Mantenimiento', elem: 'Cerchas' }, { tipo: 'Mantenimiento', elem: 'Tijeras' }, { tipo: 'Mantenimiento', elem: 'Tableros' }, { tipo: 'Mantenimiento', elem: 'Guarderas' },
         { tipo: 'Mantenimiento', elem: 'Formaletas' },
-        { tipo: 'Mantenimiento', elem: 'Andamios de Tijeras' }, { tipo: 'Mantenimiento', elem: 'Andamios Certificados' }, { tipo: 'Mantenimiento', elem: 'Guías y Portasopandas' }, { tipo: 'Mantenimiento', elem: 'Otros' },
+        { tipo: 'Mantenimiento', elem: 'Andamios de Tijeras' }, { tipo: 'Mantenimiento', elem: 'Andamios Certificados' }, { tipo: 'Mantenimiento', elem: 'Guías y Portasopandas' }, { tipo: 'Mantenimiento', elem: 'Tricapas' }, { tipo: 'Mantenimiento', elem: 'Otros' },
         { tipo: 'Pintura', elem: 'Gatos' }, { tipo: 'Pintura', elem: 'Cerchas' }, { tipo: 'Pintura', elem: 'Tijeras' }, { tipo: 'Pintura', elem: 'Formaletas Metálicas' }, { tipo: 'Pintura', elem: 'Formaletas Ecply' },
         { tipo: 'Cargue', elem: 'N/A' }, { tipo: 'Descargue', elem: 'N/A' }
       ];
